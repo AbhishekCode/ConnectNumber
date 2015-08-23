@@ -1,32 +1,34 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-    
-<head>
-  <meta charset="utf-8" />
-  <title>flappy bird clone</title>
+    <head>
+        <meta charset="UTF-8" />
+        <title>hello phaser!</title>
+        <script src="phaser.min.js"></script>
+    </head>
+    <body>
 
-  <style>
-    #game_div, p {
-      width: 400px;
-      margin: auto;
-      margin-top: 20px;
-    }
-  </style>
+    <script type="text/javascript">
 
-  <script type="text/javascript" src="phaser.min.js"></script>
-  <script type="text/javascript" src="load.js"></script>
-  <script type="text/javascript" src="menu.js"></script>
-  <script type="text/javascript" src="play.js"></script>
-  <script type="text/javascript" src="game.js"></script>
-</head>
+    window.onload = function() {
 
-<body>
+        var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create });
 
-  <p>touch to jump</p>
- <p> <a href="http://www.maiabhishek.in/2014/04/flappybird-clone-followed-lessmilkcom.html"> visit my website</a></p>
+        function preload () {
 
-  <div id="game_div"> </div>
+            game.load.image('logo', 'phaser.png');
 
-</body>
+        }
 
+        function create () {
+
+            var logo = game.add.sprite(game.world.centerX, game.world.centerY, 'logo');
+            logo.anchor.setTo(0.5, 0.5);
+
+        }
+
+    };
+
+    </script>
+
+    </body>
 </html>
