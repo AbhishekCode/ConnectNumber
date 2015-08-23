@@ -4,7 +4,25 @@ var play_state = {
 
     create: function() { 
         //var space_key = this.game.input.keyboard.addKey(Phaser.input.onDown);
-		 game.input.onDown.add(this.jump, this);
+        
+        var space_key = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        
+        var w_key = this.game.input.keyboard.addKey(Phaser.Keyboard.W);
+        var a_key = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
+        var s_key = this.game.input.keyboard.addKey(Phaser.Keyboard.S);
+        var d_key = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
+        
+        w_key.onDown.add(this.moveUp, this); 
+        a_key.onDown.add(this.moveLeft, this); 
+        s_key.onDown.add(this.moveDown, this); 
+        d_key.onDown.add(this.moveUp, this); 
+        
+        space_key.onDown.add(this.jump, this); 
+        
+        game.input.onDown.add(this.jump, this);
+        
+        /// here write fucking code to create gameRoom 
+        
 		//var touch_key = this.game.input.touch.addKey(Phaser.mouse.touch);
         //space_key.onDown.add(this.jump, this); 
 		//touch_key.onDown.add(this.jump, this);
@@ -14,7 +32,7 @@ var play_state = {
         this.timer = this.game.time.events.loop(1500, this.add_row_of_pipes, this);           
 
         this.bird = this.game.add.sprite(100, 245, 'bird');
-        this.bird.body.gravity.y = 1000; 
+       // this.bird.body.gravity.y = 1000; 
         this.bird.anchor.setTo(-0.2, 0.5);
         
         // Not 'this.score', but just 'score'
@@ -81,4 +99,29 @@ var play_state = {
         score += 1; 
         this.label_score.content = score;  
     },
+    
+    
+    
+    moveLeft: function() {
+      /// code to move left, when pressed key A
+        this.game.add.tween(this.bird).to({angle: 90}, -100).start();
+        this.jump_sound.play();
+    },
+    moveRight: function() {
+      /// code to move left, when pressed key d
+        this.game.add.tween(this.bird).to({angle: 270}, 100).start();
+        this.jump_sound.play();
+    },
+    moveUp: function() {
+      /// code to move left, when pressed key w
+        this.game.add.tween(this.bird).to({angle: 0}, 100).start();
+        this.jump_sound.play();
+    },
+    moveDown: function() {
+      /// code to move left, when pressed key s
+        this.game.add.tween(this.bird).to({angle: 180}, -100).start();
+        this.jump_sound.play();
+    },
+    
+    
 };

@@ -1,8 +1,8 @@
 var menu_state = {
     create: function() {
         // Call the 'start' function when pressing the spacebar
-        //var space_key = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-       // space_key.onDown.add(this.start, this); 
+        var space_key = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+         space_key.onDown.add(this.start, this); 
 
 		game.input.onDown.add(this.start, this);
 
@@ -25,5 +25,6 @@ var menu_state = {
     // Start the actual game
     start: function() {
         this.game.state.start('play');
+        
     }
 };
