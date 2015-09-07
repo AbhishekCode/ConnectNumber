@@ -1,10 +1,14 @@
+
+
 var play_state = {
 
     // No more preload, since it is already done in the 'load' state
-
+    backgroundTiles :  [],
+    titleSize : 50,
+    
     create: function() { 
         //var space_key = this.game.input.keyboard.addKey(Phaser.input.onDown);
-        
+         
         var space_key = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         
         var w_key = this.game.input.keyboard.addKey(Phaser.Keyboard.W);
@@ -15,7 +19,7 @@ var play_state = {
         w_key.onDown.add(this.moveUp, this); 
         a_key.onDown.add(this.moveLeft, this); 
         s_key.onDown.add(this.moveDown, this); 
-        d_key.onDown.add(this.moveUp, this); 
+        d_key.onDown.add(this.moveRight, this); 
         
         space_key.onDown.add(this.jump, this); 
         
@@ -29,11 +33,17 @@ var play_state = {
 
 //        this.pipes = game.add.group();
 //        this.pipes.createMultiple(20, 'pipe');  
-//        this.timer = this.game.time.events.loop(1500, this.add_row_of_pipes, this);           
-        var x = game.world.width/2, y = game.world.height/2;
+//        this.timer = this.game.time.events.loop(1500, this.add_row_of_pipes, this);    
+        
+        // background tiles 
+        this.drawTiles();
+        
+        
+        /// tile which will move 
+        var x = 0, y = 0;
         this.bird = this.game.add.sprite(x, y, 'bird');
        // this.bird.body.gravity.y = 1000; 
-        this.bird.anchor.setTo(0.5, 0.5);
+        this.bird.anchor.setTo(0, 0);
         
         // Not 'this.score', but just 'score'
         score = 0; 
@@ -41,6 +51,25 @@ var play_state = {
         this.label_score = this.game.add.text(20, 20, "0", style); 
 
         this.jump_sound = this.game.add.audio('jump');
+        
+     
+    },
+    
+    drawTiles: function () {
+        // draw tiles somehow
+        var x=0, y=0;
+        var countx = game.world.width / this.titleSize;
+        var county = game.world.height / this.titleSize;
+     
+        for(var i=0; i<countx;  i++) {
+            x = i* game.world.width /countx;
+            for (var j=0; j<county; j++){
+              y = j * game.world.height /county;
+              this.pipe = this.game.add.sprite(x, y, 'pipe');
+              this.backgroundTiles.push (this.pipe); 
+          } 
+        }
+        
     },
 
     update: function() {
@@ -74,28 +103,28 @@ var play_state = {
        // this.game.add.tween(this.bird).to({position:0}, 0).start();
        if (this.bird.alive == false)
             return; 
-        this.bird.x -=10;
+        this.bird.x -= this.titleSize;
         this.jump_sound.play();
     },
     moveRight: function() {
       /// code to move left, when pressed key d
        if (this.bird.alive == false)
             return; 
-        this.bird.x +=10;
+        this.bird.x += this.titleSize;
         this.jump_sound.play();
     },
     moveUp: function() {
          if (this.bird.alive == false)
             return; 
       /// code to move left, when pressed key w
-        this.bird.y -=10;
+        this.bird.y -= this.titleSize;
         this.jump_sound.play();
     },
     moveDown: function() {
          if (this.bird.alive == false)
             return; 
       /// code to move left, when pressed key s
-        this.bird.y +=10;
+        this.bird.y += this.titleSize;
         this.jump_sound.play();
     },
     
