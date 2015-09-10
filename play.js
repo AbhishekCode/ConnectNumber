@@ -5,6 +5,9 @@ var play_state = {
     // No more preload, since it is already done in the 'load' state
     backgroundTiles :  [],
     titleSize : 50,
+    indexOfPlayer : 0,
+    countX : 0,
+    countY : 0,
     
     create: function() { 
         //var space_key = this.game.input.keyboard.addKey(Phaser.input.onDown);
@@ -37,11 +40,13 @@ var play_state = {
         
         // background tiles 
         this.drawTiles();
+        this.assignNumber();
         
         
         /// tile which will move 
         var x = 0, y = 0;
         this.bird = this.game.add.sprite(x, y, 'bird');
+        this.indexOfPlayer =0;
        // this.bird.body.gravity.y = 1000; 
         this.bird.anchor.setTo(0, 0);
         
@@ -58,18 +63,36 @@ var play_state = {
     drawTiles: function () {
         // draw tiles somehow
         var x=0, y=0;
-        var countx = game.world.width / this.titleSize;
-        var county = game.world.height / this.titleSize;
-     
-        for(var i=0; i<countx;  i++) {
-            x = i* game.world.width /countx;
-            for (var j=0; j<county; j++){
-              y = j * game.world.height /county;
+        this.countx = game.world.width / this.titleSize;
+        this.county = game.world.height / this.titleSize;
+        var index =0;
+        for(var i=0; i<this.countx;  i++) {
+            x = i* game.world.width /this.countx;
+            for (var j=0; j<this.county; j++){
+              y = j * game.world.height /this.county;
               this.pipe = this.game.add.sprite(x, y, 'pipe');
-              this.backgroundTiles.push (this.pipe); 
-          } 
+              this.backgroundTiles[index] = {tile: this.pipe , hasNumber : false, visted:false}; 
+              index++;
+            } 
         }
         
+    },
+    
+    assignNumber: function () {
+        var countOfNumbers = 10;
+        var count = 0;
+        
+        do {
+             var random = Math.floor(Math.random() * (this.backgroundTiles.length)); 
+            console.log ( "random "+random +" lenght "+ this.backgroundTiles.length +" has num "+this.backgroundTiles[random].hasNumber)
+            if(! this.backgroundTiles[random].hasNumber) {
+                var style = { font: "30px Arial", fill: "#ff0000" };
+                var no = this.game.add.text( this.backgroundTiles[random].tile.x+10, this.backgroundTiles[random].tile.y+10, count, style)
+                this.backgroundTiles[random].hasNumber = true; 
+                count++;
+            }
+            
+        }while (count < countOfNumbers);
     },
 
     update: function() {
@@ -101,31 +124,63 @@ var play_state = {
     moveLeft: function() {
       /// code to move left, when pressed key A
        // this.game.add.tween(this.bird).to({position:0}, 0).start();
-       if (this.bird.alive == false)
-            return; 
-        this.bird.x -= this.titleSize;
-        this.jump_sound.play();
+       var nextIndexWouldBe = this.indexOfPlayer-this.county;
+       if(! this.backgroundTiles[nextIndexWouldBe].visted ) {
+           if (this.bird.alive == false)
+                return; 
+            this.bird.x -= this.titleSize;
+            this.jump_sound.play();
+            this.indexOfPlayer = nextIndexWouldBe;
+            this.backgroundTiles[this.indexOfPlayer].visted = true;
+            this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
+       }else {
+         this.restart_game();   
+       }
     },
     moveRight: function() {
       /// code to move left, when pressed key d
-       if (this.bird.alive == false)
-            return; 
-        this.bird.x += this.titleSize;
-        this.jump_sound.play();
+       var nextIndexWouldBe = this.indexOfPlayer+this.county;
+       if(! this.backgroundTiles[nextIndexWouldBe].visted ) {
+           if (this.bird.alive == false)
+                return; 
+            this.bird.x += this.titleSize;
+            this.jump_sound.play();
+              this.indexOfPlayer = nextIndexWouldBe;
+             this.backgroundTiles[this.indexOfPlayer].visted = true;
+            this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
+       }else {
+         this.restart_game();   
+       }
     },
     moveUp: function() {
-         if (this.bird.alive == false)
-            return; 
-      /// code to move left, when pressed key w
-        this.bird.y -= this.titleSize;
-        this.jump_sound.play();
+        var nextIndexWouldBe = this.indexOfPlayer-1;
+       if(! this.backgroundTiles[nextIndexWouldBe].visted ) {
+             if (this.bird.alive == false)
+                return; 
+          /// code to move left, when pressed key w
+            this.bird.y -= this.titleSize;
+            this.jump_sound.play();
+              this.indexOfPlayer = nextIndexWouldBe;
+             this.backgroundTiles[this.indexOfPlayer].visted = true;
+            this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
+       }else {
+         this.restart_game();   
+       }
     },
     moveDown: function() {
-         if (this.bird.alive == false)
-            return; 
-      /// code to move left, when pressed key s
-        this.bird.y += this.titleSize;
-        this.jump_sound.play();
+         var nextIndexWouldBe = this.indexOfPlayer+1;
+       if(! this.backgroundTiles[nextIndexWouldBe].visted ) {
+             if (this.bird.alive == false)
+                return; 
+          /// code to move left, when pressed key s
+            this.bird.y += this.titleSize;
+            this.jump_sound.play();
+             this.indexOfPlayer = nextIndexWouldBe;
+             this.backgroundTiles[this.indexOfPlayer].visted = true;
+            this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
+      }else {
+         this.restart_game();   
+       }
     },
     
     
