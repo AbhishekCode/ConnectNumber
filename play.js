@@ -8,6 +8,8 @@ var play_state = {
     indexOfPlayer : 0,
     countX : 0,
     countY : 0,
+    connectedValue: 0,
+    nextValueShouldBe : 1,
     
     create: function() { 
         //var space_key = this.game.input.keyboard.addKey(Phaser.input.onDown);
@@ -71,7 +73,7 @@ var play_state = {
             for (var j=0; j<this.county; j++){
               y = j * game.world.height /this.county;
               this.pipe = this.game.add.sprite(x, y, 'pipe');
-              this.backgroundTiles[index] = {tile: this.pipe , hasNumber : false, visted:false}; 
+              this.backgroundTiles[index] = {tile: this.pipe , hasNumber : false, visted:false, value:-1}; 
               index++;
             } 
         }
@@ -89,6 +91,7 @@ var play_state = {
                 var style = { font: "30px Arial", fill: "#ff0000" };
                 var no = this.game.add.text( this.backgroundTiles[random].tile.x+10, this.backgroundTiles[random].tile.y+10, count, style)
                 this.backgroundTiles[random].hasNumber = true; 
+                 this.backgroundTiles[random].value = count; 
                 count++;
             }
             
@@ -133,6 +136,7 @@ var play_state = {
             this.indexOfPlayer = nextIndexWouldBe;
             this.backgroundTiles[this.indexOfPlayer].visted = true;
             this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
+             this.connectValues();
        }else {
          this.restart_game();   
        }
@@ -148,6 +152,7 @@ var play_state = {
               this.indexOfPlayer = nextIndexWouldBe;
              this.backgroundTiles[this.indexOfPlayer].visted = true;
             this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
+             this.connectValues();
        }else {
          this.restart_game();   
        }
@@ -163,6 +168,7 @@ var play_state = {
               this.indexOfPlayer = nextIndexWouldBe;
              this.backgroundTiles[this.indexOfPlayer].visted = true;
             this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
+             this.connectValues();
        }else {
          this.restart_game();   
        }
@@ -178,10 +184,27 @@ var play_state = {
              this.indexOfPlayer = nextIndexWouldBe;
              this.backgroundTiles[this.indexOfPlayer].visted = true;
             this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
+            this.connectValues();
       }else {
          this.restart_game();   
        }
     },
+    
+    connectValues : function () {
+        
+        if(this.backgroundTiles[this.indexOfPlayer].hasNumber) {
+            console.log ("Tile value "+this.backgroundTiles[this.indexOfPlayer].value + " this.nextValueShouldBe "+ this.nextValueShouldBe);
+             if(this.backgroundTiles[this.indexOfPlayer].value == this.nextValueShouldBe) {
+               this.connectedValue = this.nextValueShouldBe;
+               this.nextValueShouldBe++;
+               this.label_score = this.game.add.text(20, 20, this.connectedValue, style); 
+             }else {
+               this.restart_game(); 
+               var style = { font: "30px Arial", fill: "#ffffff" };
+               this.label_score = this.game.add.text(20, 20, "Lost", style);  
+             }
+        }
+    }
     
     
 };
