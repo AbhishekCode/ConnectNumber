@@ -12,6 +12,10 @@ var play_state = {
     nextValueShouldBe : 1,
     countOfValues : 6,
     score : 0,
+    totalNumbersInAlevel : 8,
+    back_layer : null,
+    mid_layer : null,
+    front_layer : null,
     
     create: function() { 
         //var space_key = this.game.input.keyboard.addKey(Phaser.input.onDown);
@@ -41,6 +45,10 @@ var play_state = {
         
         game.input.onDown.add(this.jump, this);
         
+        this.back_layer = game.add.group();
+        this.mid_layer = game.add.group();
+        this.front_layer = game.add.group();
+        
         /// here write fucking code to create gameRoom 
         
 		//var touch_key = this.game.input.touch.addKey(Phaser.mouse.touch);
@@ -55,13 +63,20 @@ var play_state = {
         this.drawTiles();
         this.assignNumber();
         
+         
+         do {
+             this.indexOfPlayer = Math.floor(Math.random() * (this.backgroundTiles.length)); 
+           
+            
+        }while ( this.backgroundTiles[this.indexOfPlayer].hasNumber);
         
         /// tile which will move 
-        var x = 0, y = 0;
+        var x = this.backgroundTiles[this.indexOfPlayer].tile.x, y =this.backgroundTiles[this.indexOfPlayer].tile.y;
         this.bird = this.game.add.sprite(x, y, 'bird');
-        this.indexOfPlayer =0;
+      console.log(this.bird);
        // this.bird.body.gravity.y = 1000; 
         this.bird.anchor.setTo(0, 0);
+       this.front_layer.add(this.bird);
         
         // Not 'this.score', but just 'score'
         score = 0; 
@@ -86,6 +101,9 @@ var play_state = {
               this.pipe = this.game.add.sprite(x, y, 'pipe');
               this.backgroundTiles[index] = {tile: this.pipe , hasNumber : false, visted:false, value:-1}; 
               index++;
+                 this.back_layer.add(this.pipe); 
+//              var style = { font: "30px Arial", fill: "#ffff00" };
+//                var no = this.game.add.text( x, y, index-1, style)    
             } 
         }
         
@@ -94,19 +112,23 @@ var play_state = {
     assignNumber: function () {
        
         var count = 0;
+        var valueOfTile =0;
         
         do {
              var random = Math.floor(Math.random() * (this.backgroundTiles.length)); 
-            console.log ( "random "+random +" lenght "+ this.backgroundTiles.length +" has num "+this.backgroundTiles[random].hasNumber)
+            //console.log ( "random "+random +" lenght "+ this.backgroundTiles.length +" has num "+this.backgroundTiles[random].hasNumber)
             if(! this.backgroundTiles[random].hasNumber && !this.isNearestTileHasNumber(random)) {
                 var style = { font: "30px Arial", fill: "#ff0000" };
-                var no = this.game.add.text( this.backgroundTiles[random].tile.x+10, this.backgroundTiles[random].tile.y+10, count, style)
+                valueOfTile = this.nextValueShouldBe+count;
+                var no = this.game.add.text( this.backgroundTiles[random].tile.x+10, this.backgroundTiles[random].tile.y+10, valueOfTile, style)
                 this.backgroundTiles[random].hasNumber = true; 
-                 this.backgroundTiles[random].value = count; 
+                 this.backgroundTiles[random].value = valueOfTile; 
                 count++;
             }
             
-        }while (count < this.countOfValues);
+        }while (count < this.totalNumbersInAlevel);
+        
+        this.countOfValues = valueOfTile;
 
     },
     
@@ -132,7 +154,6 @@ var play_state = {
     update: function() {
         if (this.bird.inWorld == false)
             this.restart_game(); 
-
 //        if (this.bird.angle < 20)
 //            this.bird.angle += 1;
 //
@@ -140,9 +161,9 @@ var play_state = {
     },
 
     jump: function() {
-        if (this.bird.alive == false)
-            return; 
-
+//        if (this.bird.alive == false)
+//            return; 
+        
 //        this.bird.body.velocity.y = -350;
 //        this.game.add.tween(this.bird).to({angle: -20}, 100).start();
 //        this.jump_sound.play();
@@ -164,13 +185,16 @@ var play_state = {
         this.countX = 0;
         this.countY = 0;
         this.connectedValue= 0;
-        this.nextValueShouldBe = 1;   
+        this.nextValueShouldBe = 1;  
+        this.score = 0;
     },
     
     moveLeft: function() {
       /// code to move left, when pressed key A
        // this.game.add.tween(this.bird).to({position:0}, 0).start();
+    
        var nextIndexWouldBe = this.indexOfPlayer-this.county;
+        console.log("Player index " + this.indexOfPlayer + " next "+nextIndexWouldBe);
        if(nextIndexWouldBe >= 0 && nextIndexWouldBe < this.backgroundTiles.length && !this.backgroundTiles[nextIndexWouldBe].visted ) {
            if (this.bird.alive == false)
                 return; 
@@ -178,10 +202,13 @@ var play_state = {
             this.jump_sound.play();
             this.indexOfPlayer = nextIndexWouldBe;
             this.backgroundTiles[this.indexOfPlayer].visted = true;
-            this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
+             var vistedsprite = this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
              this.connectValues();
+             this.mid_layer.add(vistedsprite); 
+         
        }else {
          this.restart_game();   
+          console.log("Going back to already covered tile!");
        }
     },
     moveRight: function() {
@@ -194,10 +221,12 @@ var play_state = {
             this.jump_sound.play();
               this.indexOfPlayer = nextIndexWouldBe;
              this.backgroundTiles[this.indexOfPlayer].visted = true;
-            this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
+          vistedsprite = this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
              this.connectValues();
+           this.mid_layer.add(vistedsprite); 
        }else {
          this.restart_game();   
+          console.log("Going back to already covered tile!");
        }
     },
     moveUp: function() {
@@ -210,10 +239,12 @@ var play_state = {
             this.jump_sound.play();
               this.indexOfPlayer = nextIndexWouldBe;
              this.backgroundTiles[this.indexOfPlayer].visted = true;
-            this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
+            vistedsprite = this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
              this.connectValues();
+           this.mid_layer.add(vistedsprite); 
        }else {
          this.restart_game();   
+          console.log("Going back to already covered tile!");
        }
     },
     moveDown: function() {
@@ -226,10 +257,12 @@ var play_state = {
             this.jump_sound.play();
              this.indexOfPlayer = nextIndexWouldBe;
              this.backgroundTiles[this.indexOfPlayer].visted = true;
-            this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
+            vistedsprite = this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
             this.connectValues();
+           this.mid_layer.add(vistedsprite); 
       }else {
          this.restart_game();   
+          console.log("Going back to already covered tile!");
        }
     },
     
@@ -242,11 +275,17 @@ var play_state = {
                this.nextValueShouldBe++;
                this.score++;
                this.label_score.setText( this.score); //  this.game.add.text(20, 20, this.connectedValue, style); 
-               if(this.connectedValue == this.countOfValues-1) {
-                  this.restart_game(); 
+               if(this.connectedValue == this.countOfValues) {
+                //  this.restart_game(); 
+                   this.game.state.start('menu');
                   var style = { font: "20px Arial", fill: "#ffffff" };
                   this.game.add.text(20, 100, "Wow you did it, try next!", style);  
-                  this.countOfValues++;
+                 // this.countOfValues++;
+                  this.backgroundTiles =  [];
+                  this.titleSize = 50;
+                  this.indexOfPlayer = 0;
+             
+                  
                }
              }else {
                this.score = 0;
@@ -255,6 +294,7 @@ var play_state = {
                this.restart_game(); 
                var style = { font: "20px Arial", fill: "#ffffff" };
                this.game.add.text(20, 100, "Game over, press 'space' to play again", style);  
+               console.log("wrong number connected");
              }
         }
     }
