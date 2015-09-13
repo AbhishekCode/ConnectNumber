@@ -10,6 +10,8 @@ var play_state = {
     countY : 0,
     connectedValue: 0,
     nextValueShouldBe : 1,
+    countOfValues : 6,
+    score : 0,
     
     create: function() { 
         //var space_key = this.game.input.keyboard.addKey(Phaser.input.onDown);
@@ -63,9 +65,9 @@ var play_state = {
         
         // Not 'this.score', but just 'score'
         score = 0; 
-        var style = { font: "30px Arial", fill: "#ffffff" };
-        this.label_score = this.game.add.text(20, 20, "0", style); 
-
+        var style = { font: "30px Arial", fill: "#008000" };
+        this.label_score = this.game.add.text(20, 20, score, style); 
+        this.label_score.setText(this.score);
         this.jump_sound = this.game.add.audio('jump');
         
      
@@ -90,7 +92,7 @@ var play_state = {
     },
     
     assignNumber: function () {
-        var countOfNumbers = 10;
+       
         var count = 0;
         
         do {
@@ -104,7 +106,8 @@ var play_state = {
                 count++;
             }
             
-        }while (count < countOfNumbers);
+        }while (count < this.countOfValues);
+
     },
     
    isNearestTileHasNumber : function( index ) {
@@ -237,11 +240,21 @@ var play_state = {
              if(this.backgroundTiles[this.indexOfPlayer].value == this.nextValueShouldBe) {
                this.connectedValue = this.nextValueShouldBe;
                this.nextValueShouldBe++;
-               this.label_score =  this.connectedValue;//  this.game.add.text(20, 20, this.connectedValue, style); 
+               this.score++;
+               this.label_score.setText( this.score); //  this.game.add.text(20, 20, this.connectedValue, style); 
+               if(this.connectedValue == this.countOfValues-1) {
+                  this.restart_game(); 
+                  var style = { font: "20px Arial", fill: "#ffffff" };
+                  this.game.add.text(20, 100, "Wow you did it, try next!", style);  
+                  this.countOfValues++;
+               }
              }else {
+               this.score = 0;
+               this.label_score.setText( this.score); 
+               this.countOfValues = 6;
                this.restart_game(); 
-               var style = { font: "30px Arial", fill: "#ffffff" };
-               this.label_score = this.game.add.text(20, 20, "Lost", style);  
+               var style = { font: "20px Arial", fill: "#ffffff" };
+               this.game.add.text(20, 100, "Game over, press 'space' to play again", style);  
              }
         }
     }
