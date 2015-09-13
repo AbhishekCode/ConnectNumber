@@ -20,11 +20,20 @@ var play_state = {
         var a_key = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
         var s_key = this.game.input.keyboard.addKey(Phaser.Keyboard.S);
         var d_key = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
+        var up_arrow = this.game.input.keyboard.addKey(Phaser.Keyboard.UP);
+        var down_arrow = this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
+        var left_arrow = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+        var right_arrow = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
         
         w_key.onDown.add(this.moveUp, this); 
         a_key.onDown.add(this.moveLeft, this); 
         s_key.onDown.add(this.moveDown, this); 
-        d_key.onDown.add(this.moveRight, this); 
+        d_key.onDown.add(this.moveRight, this);
+        up_arrow.onDown.add(this.moveUp, this); 
+        down_arrow.onDown.add(this.moveDown, this); 
+        left_arrow.onDown.add(this.moveLeft, this); 
+        right_arrow.onDown.add(this.moveRight, this); 
+        
         
         space_key.onDown.add(this.jump, this); 
         
@@ -87,7 +96,7 @@ var play_state = {
         do {
              var random = Math.floor(Math.random() * (this.backgroundTiles.length)); 
             console.log ( "random "+random +" lenght "+ this.backgroundTiles.length +" has num "+this.backgroundTiles[random].hasNumber)
-            if(! this.backgroundTiles[random].hasNumber) {
+            if(! this.backgroundTiles[random].hasNumber && !this.isNearestTileHasNumber(random)) {
                 var style = { font: "30px Arial", fill: "#ff0000" };
                 var no = this.game.add.text( this.backgroundTiles[random].tile.x+10, this.backgroundTiles[random].tile.y+10, count, style)
                 this.backgroundTiles[random].hasNumber = true; 
@@ -96,6 +105,25 @@ var play_state = {
             }
             
         }while (count < countOfNumbers);
+    },
+    
+   isNearestTileHasNumber : function( index ) {
+        
+        if(index < this.countx || this.backgroundTiles.length - index < this.countx || index% this.countx == 0 || index% this.countx == this.countx-1 ) {
+           return true;   
+        }
+        return ( this.isThisIndexHasNumber(index-1)|| this.isThisIndexHasNumber(index+1) ||
+                this.isThisIndexHasNumber(index- this.county) || this.isThisIndexHasNumber(index+ this.county)||
+                this.isThisIndexHasNumber(index- this.county-1) || this.isThisIndexHasNumber(index+ this.county -1) ||
+               this.isThisIndexHasNumber(index- this.county +1) || this.isThisIndexHasNumber(index+ this.county+1))
+    },
+    
+    isThisIndexHasNumber : function (index) {
+       
+        if (index >=0 && index < this.backgroundTiles.length &&  this.backgroundTiles[index].hasNumber)   {
+            return true;
+        }
+        else return false;
     },
 
     update: function() {
@@ -123,12 +151,24 @@ var play_state = {
 
         // This time we go back to the 'menu' state
         this.game.state.start('menu');
-    },    
+        this.resetValues();
+    },  
+    
+    resetValues : function () {
+        this.backgroundTiles =  [];
+        this.titleSize = 50;
+        this.indexOfPlayer = 0;
+        this.countX = 0;
+        this.countY = 0;
+        this.connectedValue= 0;
+        this.nextValueShouldBe = 1;   
+    },
+    
     moveLeft: function() {
       /// code to move left, when pressed key A
        // this.game.add.tween(this.bird).to({position:0}, 0).start();
        var nextIndexWouldBe = this.indexOfPlayer-this.county;
-       if(! this.backgroundTiles[nextIndexWouldBe].visted ) {
+       if(nextIndexWouldBe >= 0 && nextIndexWouldBe < this.backgroundTiles.length && !this.backgroundTiles[nextIndexWouldBe].visted ) {
            if (this.bird.alive == false)
                 return; 
             this.bird.x -= this.titleSize;
@@ -144,7 +184,7 @@ var play_state = {
     moveRight: function() {
       /// code to move left, when pressed key d
        var nextIndexWouldBe = this.indexOfPlayer+this.county;
-       if(! this.backgroundTiles[nextIndexWouldBe].visted ) {
+       if(nextIndexWouldBe >= 0 && nextIndexWouldBe < this.backgroundTiles.length && !this.backgroundTiles[nextIndexWouldBe].visted ) {
            if (this.bird.alive == false)
                 return; 
             this.bird.x += this.titleSize;
@@ -159,7 +199,7 @@ var play_state = {
     },
     moveUp: function() {
         var nextIndexWouldBe = this.indexOfPlayer-1;
-       if(! this.backgroundTiles[nextIndexWouldBe].visted ) {
+       if( nextIndexWouldBe >= 0 && nextIndexWouldBe < this.backgroundTiles.length && ! this.backgroundTiles[nextIndexWouldBe].visted ) {
              if (this.bird.alive == false)
                 return; 
           /// code to move left, when pressed key w
@@ -175,7 +215,7 @@ var play_state = {
     },
     moveDown: function() {
          var nextIndexWouldBe = this.indexOfPlayer+1;
-       if(! this.backgroundTiles[nextIndexWouldBe].visted ) {
+       if(nextIndexWouldBe >= 0 && nextIndexWouldBe < this.backgroundTiles.length && !this.backgroundTiles[nextIndexWouldBe].visted ) {
              if (this.bird.alive == false)
                 return; 
           /// code to move left, when pressed key s
@@ -197,7 +237,7 @@ var play_state = {
              if(this.backgroundTiles[this.indexOfPlayer].value == this.nextValueShouldBe) {
                this.connectedValue = this.nextValueShouldBe;
                this.nextValueShouldBe++;
-               this.label_score = this.game.add.text(20, 20, this.connectedValue, style); 
+               this.label_score =  this.connectedValue;//  this.game.add.text(20, 20, this.connectedValue, style); 
              }else {
                this.restart_game(); 
                var style = { font: "30px Arial", fill: "#ffffff" };
