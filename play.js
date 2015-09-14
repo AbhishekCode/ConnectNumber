@@ -50,46 +50,7 @@ var play_state = {
         space_key.onDown.add(this.jump, this); 
         
         game.input.onDown.add(this.jump, this);
-        
-     var eventDuration;
-	var startPoint = {};
-	var endPoint = {};
-	var direction;
-	var minimum = {
-		duration: 75,
-		distance: 150
-	}   
-    game.input.onDown.add(function(pointer) {
-		startPoint.x = pointer.clientX;
-		startPoint.y = pointer.clientY;
-	}, this);
-
-	game.input.onUp.add(function(pointer) {
-		direction = '';
-		eventDuration = game.input.activePointer.duration;
-
-		if (eventDuration > minimum.duration) {
-			endPoint.x = pointer.clientX;
-			endPoint.y = pointer.clientY;
-
-			// Check direction
-			if (endPoint.x - startPoint.x > minimum.distance) {
-				this.moveTypeRight();   
-			} else if (startPoint.x - endPoint.x > minimum.distance) {
-				this.moveTypeLeft();  
-			} else if (endPoint.y - startPoint.y > minimum.distance) {
-				this.moveTypeDown();  
-			} else if (startPoint.y - endPoint.y > minimum.distance) {
-				this.moveTypeUp();  
-			}
-
-			if (direction) {
-				callback(direction);
-			}
-		}
-	}, this);
-        
-        
+  
         this.back_layer = game.add.group();
         this.mid_layer = game.add.group();
         this.front_layer = game.add.group();
@@ -106,7 +67,7 @@ var play_state = {
         
         // background tiles 
         this.drawTiles();
-        this.assignNumber();
+       this.assignNumber();
         
          
          do {
@@ -130,7 +91,44 @@ var play_state = {
         this.label_score.setText(this.score);
         this.jump_sound = this.game.add.audio('jump');
         
-     
+
+        var startPoint = {};      
+        game.input.onDown.add(function(pointer) {
+            startPoint.x = game.input.x;
+            startPoint.y = game.input.y;
+            console.log( " pointer " + startPoint.x +" / "+startPoint.y + " bird " + this.bird.x +" / "+ this.bird.y );
+             if (this.currentMoveType == this.moveTypes.LEFT) {
+                if(startPoint.y > this.bird.y) {
+                  this.moveTypeDown();   
+                }else if(startPoint.y < this.bird.y){
+                   this.moveTypeUp();    
+                }      
+             }else if (this.currentMoveType == this.moveTypes.RIGHT) {
+                if(startPoint.y > this.bird.y) {
+                  this.moveTypeDown();   
+                }else if(startPoint.y < this.bird.y){
+                   this.moveTypeUp();    
+                }
+                 
+             } else if (this.currentMoveType == this.moveTypes.UP) {
+                if(startPoint.x > this.bird.x) {
+                  this.moveTypeRight();   
+                }else if(startPoint.x < this.bird.x){
+                   this.moveTypeLeft();    
+                }
+                 
+             } else if (this.currentMoveType == this.moveTypes.DOWN) {
+                if(startPoint.x > this.bird.x) {
+                  this.moveTypeRight();   
+                }else if(startPoint.x < this.bird.x){
+                   this.moveTypeLeft();    
+                }
+                 
+             }else {
+               this.currentMoveType = this.moveTypes.UP;   
+             }
+             
+        }, this);
     },
     
     drawTiles: function () {
@@ -263,7 +261,31 @@ var play_state = {
 
         // This time we go back to the 'menu' state
         this.game.state.start('menu');
-        this.resetValues();
+     
+        
+        
+
+        var prevHighScore = localStorage.getItem('highScore');
+        var currentScore = this.score;
+        if(prevHighScore != null && prevHighScore < currentScore) {
+          localStorage.setItem('highScore', currentScore);
+          prevHighScore = this.score;
+        }
+        console.log (prevHighScore + " score "+ currentScore);
+        this.score = 0;
+        this.autoMoveInterval = 600;
+        this.moveStarted = false;
+        game.time.events.remove(this.autoMoveEvent);
+        this.label_score.setText( this.score); 
+        this.countOfValues = 6;
+       // this.restart_game(); 
+        var style = { font: "20px Arial", fill: "#ffffff" };
+        this.game.add.text(20, 40, "high score: " + prevHighScore, style);  
+        this.game.add.text(20, 70, "Current score: " + currentScore, style);  
+        this.game.add.text(20, 100, "Game over, press 'space' to play again", style);  
+        console.log("wrong number connected");
+        
+           this.resetValues();
     },  
     
     resetValues : function () {
@@ -382,17 +404,24 @@ var play_state = {
                   this.autoMoveInterval -= 20;
                }
              }else {
-               localStorage.setItem('highScore', this.score);
-               this.score = 0;
-               this.autoMoveInterval -= 600;
-               this.moveStarted = false;
-               game.time.events.remove(this.autoMoveEvent);
-               this.label_score.setText( this.score); 
-               this.countOfValues = 6;
+//               var prevHighScore = localStorage.getItem('highScore');
+//               var currentScore = this.score;
+//               if(prevHighScore && prevHighScore < currentScore) {
+//                  localStorage.setItem('highScore', this.score);
+//                  prevHighScore = this.score;
+//               }
+//               this.score = 0;
+//               this.autoMoveInterval -= 600;
+//               this.moveStarted = false;
+//               game.time.events.remove(this.autoMoveEvent);
+//               this.label_score.setText( this.score); 
+//               this.countOfValues = 6;
                this.restart_game(); 
-               var style = { font: "20px Arial", fill: "#ffffff" };
-               this.game.add.text(20, 100, "Game over, press 'space' to play again", style);  
-               console.log("wrong number connected");
+//               var style = { font: "20px Arial", fill: "#ffffff" };
+//               this.game.add.text(20, 40, "high score: " + prevHighScore, style);  
+//               this.game.add.text(20, 70, "Current score: " + currentScore, style);  
+//               this.game.add.text(20, 100, "Game over, press 'space' to play again", style);  
+//               console.log("wrong number connected");
              }
         }
     }
