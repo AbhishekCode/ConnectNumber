@@ -12,10 +12,16 @@ var play_state = {
     nextValueShouldBe : 1,
     countOfValues : 6,
     score : 0,
-    totalNumbersInAlevel : 8,
+    totalNumbersInAlevel : 6,
     back_layer : null,
     mid_layer : null,
     front_layer : null,
+    autoMoveInterval : 600,
+    
+    moveStarted : false,
+    moveTypes : {LEFT:0, RIGHT:1, UP:2, DOWN:3},
+    currentMoveType: null,
+    autoMoveEvent : null,
     
     create: function() { 
         //var space_key = this.game.input.keyboard.addKey(Phaser.input.onDown);
@@ -31,19 +37,58 @@ var play_state = {
         var left_arrow = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
         var right_arrow = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
         
-        w_key.onDown.add(this.moveUp, this); 
-        a_key.onDown.add(this.moveLeft, this); 
-        s_key.onDown.add(this.moveDown, this); 
-        d_key.onDown.add(this.moveRight, this);
-        up_arrow.onDown.add(this.moveUp, this); 
-        down_arrow.onDown.add(this.moveDown, this); 
-        left_arrow.onDown.add(this.moveLeft, this); 
-        right_arrow.onDown.add(this.moveRight, this); 
+        w_key.onDown.add(this.moveTypeUp, this); 
+        a_key.onDown.add(this.moveTypeLeft, this); 
+        s_key.onDown.add(this.moveTypeDown, this); 
+        d_key.onDown.add(this.moveTypeRight, this);
+        up_arrow.onDown.add(this.moveTypeUp, this); 
+        down_arrow.onDown.add(this.moveTypeDown, this); 
+        left_arrow.onDown.add(this.moveTypeLeft, this); 
+        right_arrow.onDown.add(this.moveTypeRight, this); 
         
         
         space_key.onDown.add(this.jump, this); 
         
         game.input.onDown.add(this.jump, this);
+        
+     var eventDuration;
+	var startPoint = {};
+	var endPoint = {};
+	var direction;
+	var minimum = {
+		duration: 75,
+		distance: 150
+	}   
+    game.input.onDown.add(function(pointer) {
+		startPoint.x = pointer.clientX;
+		startPoint.y = pointer.clientY;
+	}, this);
+
+	game.input.onUp.add(function(pointer) {
+		direction = '';
+		eventDuration = game.input.activePointer.duration;
+
+		if (eventDuration > minimum.duration) {
+			endPoint.x = pointer.clientX;
+			endPoint.y = pointer.clientY;
+
+			// Check direction
+			if (endPoint.x - startPoint.x > minimum.distance) {
+				this.moveTypeRight();   
+			} else if (startPoint.x - endPoint.x > minimum.distance) {
+				this.moveTypeLeft();  
+			} else if (endPoint.y - startPoint.y > minimum.distance) {
+				this.moveTypeDown();  
+			} else if (startPoint.y - endPoint.y > minimum.distance) {
+				this.moveTypeUp();  
+			}
+
+			if (direction) {
+				callback(direction);
+			}
+		}
+	}, this);
+        
         
         this.back_layer = game.add.group();
         this.mid_layer = game.add.group();
@@ -150,6 +195,49 @@ var play_state = {
         }
         else return false;
     },
+    
+    startPlayerAutoMove : function () {
+       if( !this.moveStarted ) {
+//           game.time.events.add(this.autoMoveInterval, this.movePlayerWithInterval, this);
+           this.autoMoveEvent = game.time.events.loop(this.autoMoveInterval, this.movePlayerWithInterval, this);
+           this.moveStarted = true;
+       }
+        
+    },
+    
+    movePlayerWithInterval : function () {
+        
+        /// check the direction call that function 
+        if(this.currentMoveType == this.moveTypes.LEFT)
+            this.moveLeft();
+        else if(this.currentMoveType == this.moveTypes.RIGHT)
+            this.moveRight();
+        else if(this.currentMoveType == this.moveTypes.UP)
+            this.moveUp();
+        else if(this.currentMoveType == this.moveTypes.DOWN)
+            this.moveDown();
+        
+    },
+    moveTypeLeft : function () {
+        this.currentMoveType = this.moveTypes.LEFT;
+        this.startPlayerAutoMove();        
+    },
+    
+    moveTypeRight : function () {
+        this.currentMoveType = this.moveTypes.RIGHT;
+        this.startPlayerAutoMove();        
+    },
+
+    moveTypeUp : function () {
+        this.currentMoveType = this.moveTypes.UP;
+        this.startPlayerAutoMove();        
+    },
+
+    moveTypeDown : function () {
+        this.currentMoveType = this.moveTypes.DOWN;
+        this.startPlayerAutoMove();        
+    },
+
 
     update: function() {
         if (this.bird.inWorld == false)
@@ -199,7 +287,7 @@ var play_state = {
            if (this.bird.alive == false)
                 return; 
             this.bird.x -= this.titleSize;
-            this.jump_sound.play();
+           // this.jump_sound.play();
             this.indexOfPlayer = nextIndexWouldBe;
             this.backgroundTiles[this.indexOfPlayer].visted = true;
              var vistedsprite = this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
@@ -210,6 +298,8 @@ var play_state = {
          this.restart_game();   
           console.log("Going back to already covered tile!");
        }
+        this.curretMoveType = this.moveTypes.LEFT;
+        this.startPlayerAutoMove();
     },
     moveRight: function() {
       /// code to move left, when pressed key d
@@ -218,7 +308,7 @@ var play_state = {
            if (this.bird.alive == false)
                 return; 
             this.bird.x += this.titleSize;
-            this.jump_sound.play();
+          //  this.jump_sound.play();
               this.indexOfPlayer = nextIndexWouldBe;
              this.backgroundTiles[this.indexOfPlayer].visted = true;
           vistedsprite = this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
@@ -236,7 +326,7 @@ var play_state = {
                 return; 
           /// code to move left, when pressed key w
             this.bird.y -= this.titleSize;
-            this.jump_sound.play();
+          //  this.jump_sound.play();
               this.indexOfPlayer = nextIndexWouldBe;
              this.backgroundTiles[this.indexOfPlayer].visted = true;
             vistedsprite = this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
@@ -246,6 +336,7 @@ var play_state = {
          this.restart_game();   
           console.log("Going back to already covered tile!");
        }
+        
     },
     moveDown: function() {
          var nextIndexWouldBe = this.indexOfPlayer+1;
@@ -254,7 +345,7 @@ var play_state = {
                 return; 
           /// code to move left, when pressed key s
             this.bird.y += this.titleSize;
-            this.jump_sound.play();
+           // this.jump_sound.play();
              this.indexOfPlayer = nextIndexWouldBe;
              this.backgroundTiles[this.indexOfPlayer].visted = true;
             vistedsprite = this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
@@ -264,6 +355,7 @@ var play_state = {
          this.restart_game();   
           console.log("Going back to already covered tile!");
        }
+        
     },
     
     connectValues : function () {
@@ -285,10 +377,16 @@ var play_state = {
                   this.titleSize = 50;
                   this.indexOfPlayer = 0;
              
-                  
+                  this.moveStarted = false;
+                  game.time.events.remove(this.autoMoveEvent);
+                  this.autoMoveInterval -= 20;
                }
              }else {
+               localStorage.setItem('highScore', this.score);
                this.score = 0;
+               this.autoMoveInterval -= 600;
+               this.moveStarted = false;
+               game.time.events.remove(this.autoMoveEvent);
                this.label_score.setText( this.score); 
                this.countOfValues = 6;
                this.restart_game(); 
