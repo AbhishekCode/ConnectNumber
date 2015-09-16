@@ -23,6 +23,8 @@ var play_state = {
     currentMoveType: null,
     autoMoveEvent : null,
     
+    levelCompleted: false,
+    
     create: function() { 
         //var space_key = this.game.input.keyboard.addKey(Phaser.input.onDown);
          
@@ -129,6 +131,9 @@ var play_state = {
              }
              
         }, this);
+        
+        this.levelCompleted = false;
+        
     },
     
     drawTiles: function () {
@@ -267,12 +272,11 @@ var play_state = {
 
         var prevHighScore = localStorage.getItem('highScore');
         var currentScore = this.score;
-        if(prevHighScore != null && prevHighScore < currentScore) {
+        if(prevHighScore == null || prevHighScore < currentScore) {
           localStorage.setItem('highScore', currentScore);
-          prevHighScore = this.score;
+          prevHighScore = currentScore;
         }
-        console.log (prevHighScore + " score "+ currentScore);
-        this.score = 0;
+
         this.autoMoveInterval = 600;
         this.moveStarted = false;
         game.time.events.remove(this.autoMoveEvent);
@@ -300,6 +304,10 @@ var play_state = {
     },
     
     moveLeft: function() {
+        
+      if(this.levelCompleted )
+          return;
+        
       /// code to move left, when pressed key A
        // this.game.add.tween(this.bird).to({position:0}, 0).start();
     
@@ -324,6 +332,8 @@ var play_state = {
         this.startPlayerAutoMove();
     },
     moveRight: function() {
+          if(this.levelCompleted )
+          return;
       /// code to move left, when pressed key d
        var nextIndexWouldBe = this.indexOfPlayer+this.county;
        if(nextIndexWouldBe >= 0 && nextIndexWouldBe < this.backgroundTiles.length && !this.backgroundTiles[nextIndexWouldBe].visted ) {
@@ -342,6 +352,8 @@ var play_state = {
        }
     },
     moveUp: function() {
+          if(this.levelCompleted )
+          return;
         var nextIndexWouldBe = this.indexOfPlayer-1;
        if( nextIndexWouldBe >= 0 && nextIndexWouldBe < this.backgroundTiles.length && ! this.backgroundTiles[nextIndexWouldBe].visted ) {
              if (this.bird.alive == false)
@@ -361,6 +373,8 @@ var play_state = {
         
     },
     moveDown: function() {
+          if(this.levelCompleted )
+          return;
          var nextIndexWouldBe = this.indexOfPlayer+1;
        if(nextIndexWouldBe >= 0 && nextIndexWouldBe < this.backgroundTiles.length && !this.backgroundTiles[nextIndexWouldBe].visted ) {
              if (this.bird.alive == false)
@@ -402,6 +416,8 @@ var play_state = {
                   this.moveStarted = false;
                   game.time.events.remove(this.autoMoveEvent);
                   this.autoMoveInterval -= 20;
+                   
+                  this.levelCompleted = true;
                }
              }else {
 //               var prevHighScore = localStorage.getItem('highScore');
@@ -422,6 +438,7 @@ var play_state = {
 //               this.game.add.text(20, 70, "Current score: " + currentScore, style);  
 //               this.game.add.text(20, 100, "Game over, press 'space' to play again", style);  
 //               console.log("wrong number connected");
+                   this.levelCompleted = true;
              }
         }
     }
