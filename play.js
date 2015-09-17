@@ -99,8 +99,12 @@ var play_state = {
         game.input.onDown.add(function(pointer) {
             startPoint.x = game.input.x;
             startPoint.y = game.input.y;
+            
+            if(startPoint.x < 0 || startPoint.y < 0 || startPoint.x > game.world.width || startPoint.y > game.world.height)
+                return;
             console.log( " pointer " + startPoint.x +" / "+startPoint.y + " bird " + this.bird.x +" / "+ this.bird.y );
-             if (this.currentMoveType == this.moveTypes.LEFT) {
+           
+            if (this.currentMoveType == this.moveTypes.LEFT) {
                 if(startPoint.y > this.bird.y) {
                   this.moveTypeDown();   
                 }else if(startPoint.y < this.bird.y){
@@ -418,7 +422,7 @@ var play_state = {
                 //  this.restart_game(); 
                    this.game.state.start('menu');
                   var style = { font: "20px Arial", fill: "#ffffff" };
-                  this.game.add.text(20, 100, "Wow you did it, try next!", style);  
+                  this.game.add.text(20, 100, "Wow! you did it, Continue!", style);  
                  // this.countOfValues++;
                   this.backgroundTiles =  [];
                   this.titleSize = 50;
