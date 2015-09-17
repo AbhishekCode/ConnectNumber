@@ -24,6 +24,7 @@ var play_state = {
     autoMoveEvent : null,
     
     levelCompleted: false,
+    birdTweenTime : 50,
     
     create: function() { 
         //var space_key = this.game.input.keyboard.addKey(Phaser.input.onDown);
@@ -134,6 +135,8 @@ var play_state = {
         
         this.levelCompleted = false;
         
+        
+      
     },
     
     drawTiles: function () {
@@ -316,7 +319,9 @@ var play_state = {
        if(nextIndexWouldBe >= 0 && nextIndexWouldBe < this.backgroundTiles.length && !this.backgroundTiles[nextIndexWouldBe].visted ) {
            if (this.bird.alive == false)
                 return; 
-            this.bird.x -= this.titleSize;
+            //this.bird.x -= this.titleSize;
+            var demoTween = game.add.tween(this.bird).to({x:this.bird.x - this.titleSize,y:this.bird.y},this.birdTweenTime);
+           demoTween.start();
            // this.jump_sound.play();
             this.indexOfPlayer = nextIndexWouldBe;
             this.backgroundTiles[this.indexOfPlayer].visted = true;
@@ -339,7 +344,9 @@ var play_state = {
        if(nextIndexWouldBe >= 0 && nextIndexWouldBe < this.backgroundTiles.length && !this.backgroundTiles[nextIndexWouldBe].visted ) {
            if (this.bird.alive == false)
                 return; 
-            this.bird.x += this.titleSize;
+//           this.bird.x += this.titleSize;
+           var demoTween = game.add.tween(this.bird).to({x:this.bird.x + this.titleSize,y:this.bird.y},this.birdTweenTime);
+           demoTween.start();
           //  this.jump_sound.play();
               this.indexOfPlayer = nextIndexWouldBe;
              this.backgroundTiles[this.indexOfPlayer].visted = true;
@@ -359,7 +366,9 @@ var play_state = {
              if (this.bird.alive == false)
                 return; 
           /// code to move left, when pressed key w
-            this.bird.y -= this.titleSize;
+//            this.bird.y -= this.titleSize;
+           var demoTween = game.add.tween(this.bird).to({x:this.bird.x,y:this.bird.y - this.titleSize},this.birdTweenTime);
+           demoTween.start();
           //  this.jump_sound.play();
               this.indexOfPlayer = nextIndexWouldBe;
              this.backgroundTiles[this.indexOfPlayer].visted = true;
@@ -380,7 +389,9 @@ var play_state = {
              if (this.bird.alive == false)
                 return; 
           /// code to move left, when pressed key s
-            this.bird.y += this.titleSize;
+//            this.bird.y += this.titleSize;
+            var demoTween = game.add.tween(this.bird).to({x:this.bird.x,y:this.bird.y + this.titleSize},this.birdTweenTime);
+           demoTween.start();
            // this.jump_sound.play();
              this.indexOfPlayer = nextIndexWouldBe;
              this.backgroundTiles[this.indexOfPlayer].visted = true;
