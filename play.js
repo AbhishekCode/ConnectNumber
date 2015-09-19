@@ -140,7 +140,7 @@ var play_state = {
         this.levelCompleted = false;
         
         
-      
+        this.highlightNextNumber();
     },
     
     drawTiles: function () {
@@ -409,6 +409,26 @@ var play_state = {
         
     },
     
+    highlightNextNumber : function () {
+      // to make game play clear, 
+         var nextNumberObj = null;
+        for( var i=0; i<this.backgroundTiles.length; i++) {
+             if(this.backgroundTiles[i].value == this.score+1) {
+                nextNumberObj = this.backgroundTiles[i];   
+                 break;
+             }
+        }
+        
+        if(nextNumberObj) {
+          // draw highlight sprite over this tile
+            
+           var highlightTile = this.game.add.sprite(nextNumberObj.tile.x,nextNumberObj.tile.y, 'pipe_next');
+           this.mid_layer.add(highlightTile); 
+            
+        }
+        
+    },
+    
     connectValues : function () {
         
         if(this.backgroundTiles[this.indexOfPlayer].hasNumber) {
@@ -418,6 +438,7 @@ var play_state = {
                this.nextValueShouldBe++;
                this.score++;
                this.label_score.setText( this.score); //  this.game.add.text(20, 20, this.connectedValue, style); 
+               this.highlightNextNumber();
                if(this.connectedValue == this.countOfValues) {
                 //  this.restart_game(); 
                    this.game.state.start('menu');
