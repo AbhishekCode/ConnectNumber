@@ -27,10 +27,8 @@ var play_state = {
     birdTweenTime : 50,
     
     create: function() { 
-        //var space_key = this.game.input.keyboard.addKey(Phaser.input.onDown);
-         
-        var space_key = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        
+        // events 
+        var space_key = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);        
         var w_key = this.game.input.keyboard.addKey(Phaser.Keyboard.W);
         var a_key = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
         var s_key = this.game.input.keyboard.addKey(Phaser.Keyboard.S);
@@ -47,54 +45,33 @@ var play_state = {
         up_arrow.onDown.add(this.moveTypeUp, this); 
         down_arrow.onDown.add(this.moveTypeDown, this); 
         left_arrow.onDown.add(this.moveTypeLeft, this); 
-        right_arrow.onDown.add(this.moveTypeRight, this); 
-        
-        
-        space_key.onDown.add(this.jump, this); 
-        
+        right_arrow.onDown.add(this.moveTypeRight, this);  
+        space_key.onDown.add(this.jump, this);    
         game.input.onDown.add(this.jump, this);
-  
+
         this.back_layer = game.add.group();
         this.mid_layer = game.add.group();
         this.front_layer = game.add.group();
         
         /// here write fucking code to create gameRoom 
-        
-		//var touch_key = this.game.input.touch.addKey(Phaser.mouse.touch);
-        //space_key.onDown.add(this.jump, this); 
-		//touch_key.onDown.add(this.jump, this);
-
-//        this.pipes = game.add.group();
-//        this.pipes.createMultiple(20, 'pipe');  
-//        this.timer = this.game.time.events.loop(1500, this.add_row_of_pipes, this);    
-        
-        // background tiles 
         this.drawTiles();
-       this.assignNumber();
-        
-         
-         do {
-             this.indexOfPlayer = Math.floor(Math.random() * (this.backgroundTiles.length)); 
-           
-            
+        this.assignNumber();   
+        do {
+             this.indexOfPlayer = Math.floor(Math.random() * (this.backgroundTiles.length));     
         }while ( this.backgroundTiles[this.indexOfPlayer].hasNumber);
         
-        /// tile which will move 
+        ///  Player tile which will move 
         var x = this.backgroundTiles[this.indexOfPlayer].tile.x, y =this.backgroundTiles[this.indexOfPlayer].tile.y;
         this.bird = this.game.add.sprite(x, y, 'bird');
-      console.log(this.bird);
-       // this.bird.body.gravity.y = 1000; 
         this.bird.anchor.setTo(0, 0);
-       this.front_layer.add(this.bird);
+        this.front_layer.add(this.bird);
         
-        // Not 'this.score', but just 'score'
-        score = 0; 
+        // score 
         var style = { font: "30px Arial", fill: "#008000" };
-        this.label_score = this.game.add.text(20, 20, score, style); 
+        this.label_score = this.game.add.text(20, 20, 0, style); 
         this.label_score.setText(this.score);
         this.jump_sound = this.game.add.audio('jump');
         
-
         var startPoint = {};      
         game.input.onDown.add(function(pointer) {
             startPoint.x = game.input.x;
@@ -102,7 +79,6 @@ var play_state = {
             
             if(startPoint.x < 0 || startPoint.y < 0 || startPoint.x > game.world.width || startPoint.y > game.world.height)
                 return;
-            console.log( " pointer " + startPoint.x +" / "+startPoint.y + " bird " + this.bird.x +" / "+ this.bird.y );
            
             if (this.currentMoveType == this.moveTypes.LEFT) {
                 if(startPoint.y > this.bird.y) {
@@ -137,9 +113,7 @@ var play_state = {
              
         }, this);
         
-        this.levelCompleted = false;
-        
-        
+        this.levelCompleted = false;      
         this.highlightNextNumber();
     },
     
@@ -150,25 +124,21 @@ var play_state = {
         this.county = game.world.height / this.titleSize;
         var index =0;
         for(var i=0; i<this.countx;  i++) {
-            x = i* game.world.width /this.countx;
-            for (var j=0; j<this.county; j++){
-              y = j * game.world.height /this.county;
-              this.pipe = this.game.add.sprite(x, y, 'pipe');
-              this.backgroundTiles[index] = {tile: this.pipe , hasNumber : false, visted:false, value:-1}; 
-              index++;
-                 this.back_layer.add(this.pipe); 
-//              var style = { font: "30px Arial", fill: "#ffff00" };
-//                var no = this.game.add.text( x, y, index-1, style)    
+                x = i* game.world.width /this.countx;
+                for (var j=0; j<this.county; j++){
+                y = j * game.world.height /this.county;
+                this.pipe = this.game.add.sprite(x, y, 'pipe');
+                this.backgroundTiles[index] = {tile: this.pipe , hasNumber : false, visted:false, value:-1}; 
+                index++;
+                this.back_layer.add(this.pipe);  
             } 
-        }
-        
+        }   
     },
     
     assignNumber: function () {
        
         var count = 0;
-        var valueOfTile =0;
-        
+        var valueOfTile =0;     
         do {
              var random = Math.floor(Math.random() * (this.backgroundTiles.length)); 
             //console.log ( "random "+random +" lenght "+ this.backgroundTiles.length +" has num "+this.backgroundTiles[random].hasNumber)
@@ -177,14 +147,11 @@ var play_state = {
                 valueOfTile = this.nextValueShouldBe+count;
                 var no = this.game.add.text( this.backgroundTiles[random].tile.x+10, this.backgroundTiles[random].tile.y+10, valueOfTile, style)
                 this.backgroundTiles[random].hasNumber = true; 
-                 this.backgroundTiles[random].value = valueOfTile; 
+                this.backgroundTiles[random].value = valueOfTile; 
                 count++;
-            }
-            
-        }while (count < this.totalNumbersInAlevel);
-        
+            }            
+        }while (count < this.totalNumbersInAlevel);       
         this.countOfValues = valueOfTile;
-
     },
     
    isNearestTileHasNumber : function( index ) {
@@ -208,11 +175,9 @@ var play_state = {
     
     startPlayerAutoMove : function () {
        if( !this.moveStarted ) {
-//           game.time.events.add(this.autoMoveInterval, this.movePlayerWithInterval, this);
            this.autoMoveEvent = game.time.events.loop(this.autoMoveInterval, this.movePlayerWithInterval, this);
            this.moveStarted = true;
-       }
-        
+       }      
     },
     
     movePlayerWithInterval : function () {
@@ -251,52 +216,36 @@ var play_state = {
 
     update: function() {
         if (this.bird.inWorld == false)
-            this.restart_game(); 
-//        if (this.bird.angle < 20)
-//            this.bird.angle += 1;
-//
-//        this.game.physics.overlap(this.bird, this.pipes, this.hit_pipe, null, this);      
+            this.restart_game();    
     },
 
     jump: function() {
-//        if (this.bird.alive == false)
-//            return; 
-        
-//        this.bird.body.velocity.y = -350;
-//        this.game.add.tween(this.bird).to({angle: -20}, 100).start();
-//        this.jump_sound.play();
+           /// 
     },
     
     restart_game: function() {
         
         this.game.time.events.remove(this.timer);
-
         // This time we go back to the 'menu' state
         this.game.state.start('menu');
-     
-        
-        
-
         var prevHighScore = localStorage.getItem('highScore');
         var currentScore = this.score;
         if(prevHighScore == null || prevHighScore < currentScore) {
-          localStorage.setItem('highScore', currentScore);
-          prevHighScore = currentScore;
+            localStorage.setItem('highScore', currentScore);
+            prevHighScore = currentScore;
         }
-
         this.autoMoveInterval = 600;
         this.moveStarted = false;
         game.time.events.remove(this.autoMoveEvent);
         this.label_score.setText( this.score); 
         this.countOfValues = 6;
-       // this.restart_game(); 
+        //this.restart_game(); 
         var style = { font: "20px Arial", fill: "#ffffff" };
         this.game.add.text(20, 40, "high score: " + prevHighScore, style);  
         this.game.add.text(20, 70, "Current score: " + currentScore, style);  
         this.game.add.text(20, 100, "Game over, press 'space' to play again", style);  
         console.log("wrong number connected");
-        
-           this.resetValues();
+        this.resetValues();
     },  
     
     resetValues : function () {
@@ -312,121 +261,106 @@ var play_state = {
     
     moveLeft: function() {
         
-      if(this.levelCompleted )
-          return;
-        
-      /// code to move left, when pressed key A
-       // this.game.add.tween(this.bird).to({position:0}, 0).start();
-    
-       var nextIndexWouldBe = this.indexOfPlayer-this.county;
-        console.log("Player index " + this.indexOfPlayer + " next "+nextIndexWouldBe);
-       if(nextIndexWouldBe >= 0 && nextIndexWouldBe < this.backgroundTiles.length && !this.backgroundTiles[nextIndexWouldBe].visted ) {
-           if (this.bird.alive == false)
+        if(this.levelCompleted )
+            return;      
+        /// code to move left, when pressed key A
+        // this.game.add.tween(this.bird).to({position:0}, 0).start();    
+        var nextIndexWouldBe = this.indexOfPlayer-this.county;
+        if(nextIndexWouldBe >= 0 && nextIndexWouldBe < this.backgroundTiles.length && !this.backgroundTiles[nextIndexWouldBe].visted ) {
+            if (this.bird.alive == false)
                 return; 
             //this.bird.x -= this.titleSize;
             var demoTween = game.add.tween(this.bird).to({x:this.bird.x - this.titleSize,y:this.bird.y},this.birdTweenTime);
-           demoTween.start();
-           // this.jump_sound.play();
+            demoTween.start();
+            // this.jump_sound.play();
             this.indexOfPlayer = nextIndexWouldBe;
             this.backgroundTiles[this.indexOfPlayer].visted = true;
-             var vistedsprite = this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
-             this.connectValues();
-             this.mid_layer.add(vistedsprite); 
-         
-       }else {
-         this.restart_game();   
-          console.log("Going back to already covered tile!");
-       }
-        this.curretMoveType = this.moveTypes.LEFT;
-        this.startPlayerAutoMove();
+            var vistedsprite = this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
+            this.connectValues();
+            this.mid_layer.add(vistedsprite); 
+        }else {
+            this.restart_game();   
+            console.log("Going back to already covered tile!");
+        }
+            this.curretMoveType = this.moveTypes.LEFT;
+            this.startPlayerAutoMove();
     },
     moveRight: function() {
-          if(this.levelCompleted )
-          return;
-      /// code to move left, when pressed key d
-       var nextIndexWouldBe = this.indexOfPlayer+this.county;
-       if(nextIndexWouldBe >= 0 && nextIndexWouldBe < this.backgroundTiles.length && !this.backgroundTiles[nextIndexWouldBe].visted ) {
-           if (this.bird.alive == false)
+        if(this.levelCompleted )
+            return;
+        var nextIndexWouldBe = this.indexOfPlayer+this.county;
+        if(nextIndexWouldBe >= 0 && nextIndexWouldBe < this.backgroundTiles.length && !this.backgroundTiles[nextIndexWouldBe].visted ) {
+            if (this.bird.alive == false)
                 return; 
-//           this.bird.x += this.titleSize;
-           var demoTween = game.add.tween(this.bird).to({x:this.bird.x + this.titleSize,y:this.bird.y},this.birdTweenTime);
-           demoTween.start();
-          //  this.jump_sound.play();
-              this.indexOfPlayer = nextIndexWouldBe;
-             this.backgroundTiles[this.indexOfPlayer].visted = true;
-          vistedsprite = this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
-             this.connectValues();
-           this.mid_layer.add(vistedsprite); 
-       }else {
-         this.restart_game();   
-          console.log("Going back to already covered tile!");
-       }
-    },
-    moveUp: function() {
-          if(this.levelCompleted )
-          return;
-        var nextIndexWouldBe = this.indexOfPlayer-1;
-       if( nextIndexWouldBe >= 0 && nextIndexWouldBe < this.backgroundTiles.length && ! this.backgroundTiles[nextIndexWouldBe].visted ) {
-             if (this.bird.alive == false)
-                return; 
-          /// code to move left, when pressed key w
-//            this.bird.y -= this.titleSize;
-           var demoTween = game.add.tween(this.bird).to({x:this.bird.x,y:this.bird.y - this.titleSize},this.birdTweenTime);
-           demoTween.start();
-          //  this.jump_sound.play();
-              this.indexOfPlayer = nextIndexWouldBe;
-             this.backgroundTiles[this.indexOfPlayer].visted = true;
-            vistedsprite = this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
-             this.connectValues();
-           this.mid_layer.add(vistedsprite); 
-       }else {
-         this.restart_game();   
-          console.log("Going back to already covered tile!");
-       }
-        
-    },
-    moveDown: function() {
-          if(this.levelCompleted )
-          return;
-         var nextIndexWouldBe = this.indexOfPlayer+1;
-       if(nextIndexWouldBe >= 0 && nextIndexWouldBe < this.backgroundTiles.length && !this.backgroundTiles[nextIndexWouldBe].visted ) {
-             if (this.bird.alive == false)
-                return; 
-          /// code to move left, when pressed key s
-//            this.bird.y += this.titleSize;
-            var demoTween = game.add.tween(this.bird).to({x:this.bird.x,y:this.bird.y + this.titleSize},this.birdTweenTime);
-           demoTween.start();
-           // this.jump_sound.play();
-             this.indexOfPlayer = nextIndexWouldBe;
-             this.backgroundTiles[this.indexOfPlayer].visted = true;
+            var demoTween = game.add.tween(this.bird).to({x:this.bird.x + this.titleSize,y:this.bird.y},this.birdTweenTime);
+            demoTween.start();
+            this.jump_sound.play();
+            this.indexOfPlayer = nextIndexWouldBe;
+            this.backgroundTiles[this.indexOfPlayer].visted = true;
             vistedsprite = this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
             this.connectValues();
-           this.mid_layer.add(vistedsprite); 
-      }else {
-         this.restart_game();   
-          console.log("Going back to already covered tile!");
-       }
+            this.mid_layer.add(vistedsprite); 
+        }else {
+            this.restart_game();   
+            console.log("Going back to already covered tile!");
+        }
+    },
+    moveUp: function() {
+        if(this.levelCompleted )
+            return;
+        var nextIndexWouldBe = this.indexOfPlayer-1;
+        if( nextIndexWouldBe >= 0 && nextIndexWouldBe < this.backgroundTiles.length && ! this.backgroundTiles[nextIndexWouldBe].visted ) {
+            if (this.bird.alive == false)
+                return; 
+            var demoTween = game.add.tween(this.bird).to({x:this.bird.x,y:this.bird.y - this.titleSize},this.birdTweenTime);
+            demoTween.start();
+            this.jump_sound.play();
+            this.indexOfPlayer = nextIndexWouldBe;
+            this.backgroundTiles[this.indexOfPlayer].visted = true;
+            vistedsprite = this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
+            this.connectValues();
+            this.mid_layer.add(vistedsprite); 
+        }else {
+            this.restart_game();   
+            console.log("Going back to already covered tile!");
+        }
+    },
+    moveDown: function() {
+        if(this.levelCompleted )
+            return;
+        var nextIndexWouldBe = this.indexOfPlayer+1;
+        if(nextIndexWouldBe >= 0 && nextIndexWouldBe < this.backgroundTiles.length && !this.backgroundTiles[nextIndexWouldBe].visted ) {
+            if (this.bird.alive == false)
+                return; 
+            var demoTween = game.add.tween(this.bird).to({x:this.bird.x,y:this.bird.y + this.titleSize},this.birdTweenTime);
+            demoTween.start();
+            this.jump_sound.play();
+            this.indexOfPlayer = nextIndexWouldBe;
+            this.backgroundTiles[this.indexOfPlayer].visted = true;
+            vistedsprite = this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
+            this.connectValues();
+            this.mid_layer.add(vistedsprite); 
+        }else {
+            this.restart_game();   
+            console.log("Going back to already covered tile!");
+        }
         
     },
     
     highlightNextNumber : function () {
-      // to make game play clear, 
-         var nextNumberObj = null;
+        // to make game play clear, 
+        var nextNumberObj = null;
         for( var i=0; i<this.backgroundTiles.length; i++) {
-             if(this.backgroundTiles[i].value == this.score+1) {
+            if(this.backgroundTiles[i].value == this.score+1) {
                 nextNumberObj = this.backgroundTiles[i];   
-                 break;
-             }
+                break;
+            }
         }
-        
         if(nextNumberObj) {
-          // draw highlight sprite over this tile
-            
-           var highlightTile = this.game.add.sprite(nextNumberObj.tile.x,nextNumberObj.tile.y, 'pipe_next');
-           this.mid_layer.add(highlightTile); 
-            
+            // draw highlight sprite over this tile
+            var highlightTile = this.game.add.sprite(nextNumberObj.tile.x,nextNumberObj.tile.y, 'pipe_next');
+            this.mid_layer.add(highlightTile); 
         }
-        
     },
     
     connectValues : function () {
