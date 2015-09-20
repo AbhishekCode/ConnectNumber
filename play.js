@@ -160,9 +160,9 @@ var play_state = {
            return true;   
         }
         return ( this.isThisIndexHasNumber(index-1)|| this.isThisIndexHasNumber(index+1) ||
-                this.isThisIndexHasNumber(index- this.county) || this.isThisIndexHasNumber(index+ this.county)||
-                this.isThisIndexHasNumber(index- this.county-1) || this.isThisIndexHasNumber(index+ this.county -1) ||
-               this.isThisIndexHasNumber(index- this.county +1) || this.isThisIndexHasNumber(index+ this.county+1))
+            this.isThisIndexHasNumber(index- this.county) || this.isThisIndexHasNumber(index+ this.county)||
+            this.isThisIndexHasNumber(index- this.county-1) || this.isThisIndexHasNumber(index+ this.county -1) ||
+            this.isThisIndexHasNumber(index- this.county +1) || this.isThisIndexHasNumber(index+ this.county+1))
     },
     
     isThisIndexHasNumber : function (index) {
@@ -272,7 +272,7 @@ var play_state = {
             //this.bird.x -= this.titleSize;
             var demoTween = game.add.tween(this.bird).to({x:this.bird.x - this.titleSize,y:this.bird.y},this.birdTweenTime);
             demoTween.start();
-            // this.jump_sound.play();
+            //this.jump_sound.play();
             this.indexOfPlayer = nextIndexWouldBe;
             this.backgroundTiles[this.indexOfPlayer].visted = true;
             var vistedsprite = this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
@@ -294,7 +294,7 @@ var play_state = {
                 return; 
             var demoTween = game.add.tween(this.bird).to({x:this.bird.x + this.titleSize,y:this.bird.y},this.birdTweenTime);
             demoTween.start();
-            this.jump_sound.play();
+            //this.jump_sound.play();
             this.indexOfPlayer = nextIndexWouldBe;
             this.backgroundTiles[this.indexOfPlayer].visted = true;
             vistedsprite = this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
@@ -314,7 +314,7 @@ var play_state = {
                 return; 
             var demoTween = game.add.tween(this.bird).to({x:this.bird.x,y:this.bird.y - this.titleSize},this.birdTweenTime);
             demoTween.start();
-            this.jump_sound.play();
+            //this.jump_sound.play();
             this.indexOfPlayer = nextIndexWouldBe;
             this.backgroundTiles[this.indexOfPlayer].visted = true;
             vistedsprite = this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
@@ -334,7 +334,7 @@ var play_state = {
                 return; 
             var demoTween = game.add.tween(this.bird).to({x:this.bird.x,y:this.bird.y + this.titleSize},this.birdTweenTime);
             demoTween.start();
-            this.jump_sound.play();
+            //this.jump_sound.play();
             this.indexOfPlayer = nextIndexWouldBe;
             this.backgroundTiles[this.indexOfPlayer].visted = true;
             vistedsprite = this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
