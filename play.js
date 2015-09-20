@@ -195,22 +195,25 @@ var play_state = {
     },
     moveTypeLeft : function () {
         this.currentMoveType = this.moveTypes.LEFT;
-        this.startPlayerAutoMove();        
+        this.moveLeft();       
     },
     
     moveTypeRight : function () {
         this.currentMoveType = this.moveTypes.RIGHT;
-        this.startPlayerAutoMove();        
+//        this.startPlayerAutoMove();    
+         this.moveRight();
     },
 
     moveTypeUp : function () {
         this.currentMoveType = this.moveTypes.UP;
-        this.startPlayerAutoMove();        
+//        this.startPlayerAutoMove();  
+         this.moveUp();
     },
 
     moveTypeDown : function () {
         this.currentMoveType = this.moveTypes.DOWN;
-        this.startPlayerAutoMove();        
+//        this.startPlayerAutoMove();   
+         this.moveDown();
     },
 
 
@@ -282,8 +285,7 @@ var play_state = {
             this.restart_game();   
             console.log("Going back to already covered tile!");
         }
-            this.curretMoveType = this.moveTypes.LEFT;
-            this.startPlayerAutoMove();
+         
     },
     moveRight: function() {
         if(this.levelCompleted )
@@ -360,6 +362,8 @@ var play_state = {
             // draw highlight sprite over this tile
             var highlightTile = this.game.add.sprite(nextNumberObj.tile.x,nextNumberObj.tile.y, 'pipe_next');
             this.mid_layer.add(highlightTile); 
+            var style = { font: "30px Arial", fill: "#ff0000" };
+            var num = this.game.add.text( nextNumberObj.tile.x+10, nextNumberObj.tile.y+10, nextNumberObj.value, style)
         }
     },
     
