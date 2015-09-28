@@ -67,8 +67,8 @@ var play_state = {
         this.front_layer.add(this.bird);
         
         // score 
-        var style = { font: "30px Arial", fill: "#008000" };
-        this.label_score = this.game.add.text(20, 20, 0, style); 
+        var style = { font: "30px Arial", fill: "#ff0000" };
+        this.label_score = this.game.add.text(10, 10, 0, style); 
         this.label_score.setText(this.score);
         this.jump_sound = this.game.add.audio('jump');
         
@@ -145,7 +145,9 @@ var play_state = {
             if(! this.backgroundTiles[random].hasNumber && !this.isNearestTileHasNumber(random)) {
                 var style = { font: "30px Arial", fill: "#ff0000" };
                 valueOfTile = this.nextValueShouldBe+count;
-                var no = this.game.add.text( this.backgroundTiles[random].tile.x+10, this.backgroundTiles[random].tile.y+10, valueOfTile, style)
+//                var no = this.game.add.text( this.backgroundTiles[random].tile.x+10, this.backgroundTiles[random].tile.y+10, valueOfTile, style)
+                var apple = this.game.add.sprite(this.backgroundTiles[random].tile.x, this.backgroundTiles[random].tile.y, 'apple');
+                this.back_layer.add(apple); 
                 this.backgroundTiles[random].hasNumber = true; 
                 this.backgroundTiles[random].value = valueOfTile; 
                 count++;
@@ -275,10 +277,10 @@ var play_state = {
             //this.bird.x -= this.titleSize;
             var demoTween = game.add.tween(this.bird).to({x:this.bird.x - this.titleSize,y:this.bird.y},this.birdTweenTime);
             demoTween.start();
-            //this.jump_sound.play();
-            this.indexOfPlayer = nextIndexWouldBe;
+            //this.jump_sound.play();           
             this.backgroundTiles[this.indexOfPlayer].visted = true;
-            var vistedsprite = this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
+            var vistedsprite = this.game.add.sprite(this.backgroundTiles[this.indexOfPlayer].tile.x, this.backgroundTiles[this.indexOfPlayer].tile.y, 'pipe_visited');
+            this.indexOfPlayer = nextIndexWouldBe;
             this.connectValues();
             this.mid_layer.add(vistedsprite); 
         }else {
@@ -296,10 +298,10 @@ var play_state = {
                 return; 
             var demoTween = game.add.tween(this.bird).to({x:this.bird.x + this.titleSize,y:this.bird.y},this.birdTweenTime);
             demoTween.start();
-            //this.jump_sound.play();
-            this.indexOfPlayer = nextIndexWouldBe;
+            //this.jump_sound.play();        
             this.backgroundTiles[this.indexOfPlayer].visted = true;
-            vistedsprite = this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
+            vistedsprite = this.game.add.sprite(this.backgroundTiles[this.indexOfPlayer].tile.x, this.backgroundTiles[this.indexOfPlayer].tile.y, 'pipe_visited');
+            this.indexOfPlayer = nextIndexWouldBe;
             this.connectValues();
             this.mid_layer.add(vistedsprite); 
         }else {
@@ -317,9 +319,9 @@ var play_state = {
             var demoTween = game.add.tween(this.bird).to({x:this.bird.x,y:this.bird.y - this.titleSize},this.birdTweenTime);
             demoTween.start();
             //this.jump_sound.play();
-            this.indexOfPlayer = nextIndexWouldBe;
             this.backgroundTiles[this.indexOfPlayer].visted = true;
-            vistedsprite = this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
+            vistedsprite = this.game.add.sprite(this.backgroundTiles[this.indexOfPlayer].tile.x, this.backgroundTiles[this.indexOfPlayer].tile.y, 'pipe_visited');
+            this.indexOfPlayer = nextIndexWouldBe;
             this.connectValues();
             this.mid_layer.add(vistedsprite); 
         }else {
@@ -336,10 +338,10 @@ var play_state = {
                 return; 
             var demoTween = game.add.tween(this.bird).to({x:this.bird.x,y:this.bird.y + this.titleSize},this.birdTweenTime);
             demoTween.start();
-            //this.jump_sound.play();
-            this.indexOfPlayer = nextIndexWouldBe;
+            //this.jump_sound.play();  
             this.backgroundTiles[this.indexOfPlayer].visted = true;
-            vistedsprite = this.game.add.sprite(this.backgroundTiles[nextIndexWouldBe].tile.x, this.backgroundTiles[nextIndexWouldBe].tile.y, 'pipe_visited');
+            vistedsprite = this.game.add.sprite(this.backgroundTiles[this.indexOfPlayer].tile.x, this.backgroundTiles[this.indexOfPlayer].tile.y, 'pipe_visited');
+            this.indexOfPlayer = nextIndexWouldBe;
             this.connectValues();
             this.mid_layer.add(vistedsprite); 
         }else {
@@ -363,7 +365,7 @@ var play_state = {
             var highlightTile = this.game.add.sprite(nextNumberObj.tile.x,nextNumberObj.tile.y, 'pipe_next');
             this.mid_layer.add(highlightTile); 
             var style = { font: "30px Arial", fill: "#ff0000" };
-            var num = this.game.add.text( nextNumberObj.tile.x+10, nextNumberObj.tile.y+10, nextNumberObj.value, style)
+          //  var num = this.game.add.text( nextNumberObj.tile.x+10, nextNumberObj.tile.y+10, nextNumberObj.value, style)
         }
     },
     
@@ -381,7 +383,7 @@ var play_state = {
                 //  this.restart_game(); 
                    this.game.state.start('menu');
                   var style = { font: "20px Arial", fill: "#ffffff" };
-                  this.game.add.text(20, 100, "Wow! you did it, Continue!", style);  
+                  this.game.add.text(20, 100, "Awesome! keep going!", style);  
                  // this.countOfValues++;
                   this.backgroundTiles =  [];
                   this.titleSize = 50;
